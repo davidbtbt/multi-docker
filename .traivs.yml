@@ -1,0 +1,26 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  # the end ./client says to look ast the client folder for context
+  - docker build -t davidbtbt/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true davidbtbt/react-test npm test -- --coverage
+
+after_success:
+  # no need to specify dockerfile because it will use the default.
+  - docker build -t davidbtbt/multi-client ./client
+  - docker build -t davidbtbt/multi-nginx ./nginx
+  - docker build -t davidbtbt/multi-server ./server
+  - docker build -t davidbtbt/multi-worker ./worker
+
+  # Login to the docker CLI. These env vars are defined in Travis UI settings
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # take thos eimages and push them docker hum
+  - docker push davidbtbt/multi-client
+  - docker push davidbtbt/multi-nginx
+  - docker push davidbtbt/multi-server
+  - docker push davidbtbt/multi-worker
