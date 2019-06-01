@@ -19,7 +19,7 @@ after_success:
   # Login to the docker CLI. These env vars are defined in Travis UI settings
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
-  # take thos eimages and push them docker hum
+  # take those images and push them docker hum
   - docker push davidbtbt/multi-client
   - docker push davidbtbt/multi-nginx
   - docker push davidbtbt/multi-server
